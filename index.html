@@ -460,65 +460,76 @@
       </button>
     </div>
   </div>
+<script>
+const bookingForm = document.getElementById('bookingForm');
 
-  <script>
-    const bookingForm = document.getElementById('bookingForm');
+bookingForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-    bookingForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
+  const submitBtn = document.getElementById('submitBtn');
+  const eventType = document.getElementById('eventType');
+  const messageField = document.getElementById('messageField');
 
-      const submitBtn = document.getElementById('submitBtn');
-      const eventType = document.getElementById('eventType');
-      const messageField = document.getElementById('messageField');
+  if (eventType.value.trim() === '') {
+    alert('Please select an event type.');
+    return;
+  }
 
-      if (eventType.value.trim() === '') {
-        alert('Please select an event type.');
-        return;
+  if (messageField.value.trim().length < 10) {
+    alert('Please enter a detailed message.');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = '0.7';
+  submitBtn.innerHTML = 'Submitting...';
+
+  try {
+
+    const response = await fetch('https://formsubmit.co/ajax/avenuebanquethall@gmail.com', {
+      method: 'POST',
+      body: new FormData(bookingForm),
+      headers: {
+        'Accept': 'application/json'
       }
-
-      if (messageField.value.trim().length < 10) {
-        alert('Please enter a detailed message.');
-        return;
-      }
-      submitBtn.disabled = true;
-      submitBtn.style.opacity = '0.7';
-      submitBtn.innerHTML = 'Submitting...';
-
-      fetch('https://formsubmit.co/ajax/avenuebanquethall@gmail.com', {
-        method: 'POST',
-        body: new FormData(bookingForm),
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(async response => {
-        const data = await response.json();
-
-        if (response.ok || data.success === 'true') {
-          const popup = document.getElementById('thankYouPopup');
-          popup.classList.remove('hidden');
-          popup.classList.add('flex');
-          bookingForm.reset();
-        } else {
-          alert('Something went wrong. Please try again.');
-        }
-      })
-      .catch(() => {
-        alert('Network error. Please try again later.');
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.innerHTML = 'Submit Inquiry';
-      });
     });
 
-    function closePopup() {
-      const popup = document.getElementById('thankYouPopup');
-      popup.classList.add('hidden');
-      popup.classList.remove('flex');
+    if (!response.ok) {
+      throw new Error('Server Error');
     }
-  </script>
+
+    const data = await response.json();
+
+    console.log(data);
+
+    const popup = document.getElementById('thankYouPopup');
+    popup.classList.remove('hidden');
+    popup.classList.add('flex');
+
+    bookingForm.reset();
+
+  } catch(error) {
+
+    console.log(error);
+
+    alert('Submission failed. Please check internet or try again later.');
+
+  } finally {
+
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+    submitBtn.innerHTML = 'Submit Inquiry';
+
+  }
+});
+
+function closePopup() {
+  const popup = document.getElementById('thankYouPopup');
+  popup.classList.add('hidden');
+  popup.classList.remove('flex');
+}
+</script>
+
 
 </body>
 </html>
